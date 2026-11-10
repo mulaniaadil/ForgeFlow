@@ -1,77 +1,95 @@
 # Factory Layout Studio
-**Using computer vision to design a factory with optimal placement of equipment** — Work System Design course project.
 
-Turn a floor-plan image into an editable digital layout, then find the equipment arrangement that minimises
-material-handling distance while keeping aisle clearances.
+Give it a picture of a factory floor plan. It finds the machines, measures the floor, and suggests a better
+arrangement so that material travels less between machines.
 
-```
-floor-plan image → PyTorch detector (machines, docks, columns) → OpenCV scale-bar calibration (px → m)
-→ editable layout → simulated-annealing optimiser (clearance, obstacles, rotation, shortest aisle path)
-→ improved layout + relocation plan
-```
+![Before and after](outputs/before_after_layout.png)
 
-Stack: Python, PyTorch/TorchVision (Faster R-CNN MobileNetV3-FPN), OpenCV, NumPy, pandas, Matplotlib, Streamlit.
+*On the sample factory, total material travel drops by **54%**, while keeping 1 m aisles open.*
 
-## Key results
-| | |
-|---|---|
-| Detector, held-out test plans | mAP@0.5 **0.950**, precision 0.904, recall 0.916 |
-| Detector, stress-test plans (different look) | mAP@0.5 0.319 — main limitation |
-| Scale calibration error | 0.67 % mean |
-| Optimiser, 30 × 20 m reference plant | 14,155 → 6,453 load-m/shift (**−54.4 %**), all constraints met |
-| End to end, 40 test plans | all objects found in 67.5 %; 65.9 % saving from detected vs 69.0 % from true layouts |
+---
 
-Source: `outputs/*.json` / `*.csv`. Full write-up: `presentation/Factory_Layout_Studio_Final_Report.docx`.
+## How it works
 
-## Quick start
+1. **Read the plan** – an AI model finds every machine, loading dock and pillar in the image.
+2. **Measure it** – the scale bar on the drawing turns pixels into metres.
+3. **Model the flow** – you enter how much material moves between machines each shift.
+4. **Optimise** – a search algorithm tries thousands of arrangements and keeps the one with the least travel.
+
+---
+
+## Get started
+
+You need **Python 3.10+**.
+
 ```bash
-python -m pip install -r requirements.txt
+pip install -r requirements.txt
 python -m streamlit run app.py
 ```
-A trained model (`outputs/detector.pt`) and sample plans (`data/images/`) are included, so the app works immediately.
-Without the model the app still runs; only the image-import page is disabled.
 
-## Using the app
-| Page | What you do |
+The app opens in your browser. A trained model and sample floor plans are already included, so you can try it straight away.
+
+### Using the app
+
+| Step | Page | What to do |
+|:-:|---|---|
+| 1 | **Import floor plan** | Pick a sample plan or upload your own, then click **Use this layout**. |
+| 2 | **Layout editor** | Check the detected machines. Fix positions, add anything missed, then **Save changes**. |
+| 3 | **Material flow** | Set how many loads each product moves per shift. |
+| 4 | **Optimize & export** | Click **Run optimization**. Download the new layout as CSV, PNG or JSON. |
+
+---
+
+## Results
+
+| What was measured | Result |
 |---|---|
-| **Dashboard** | Overview: floor area, equipment, constraint check, latest saving. |
-| **Import floor plan** | Upload a plan or pick a sample; review detections; click **Use this layout**. Scale and detection-confidence settings are on this page. |
-| **Layout editor** | Edit every object in metres (x, y = lower-left corner), add missed equipment, delete false detections, lock machines in place, set floor size. **Save changes** to apply. |
-| **Material flow** | Set product volumes (unit loads per shift); view the from-to matrix and busiest links. |
-| **Optimize & export** | Choose clearance, position tolerance and search effort (Quick / Balanced / Thorough); compare before/after; download the relocation plan (CSV), drawing (PNG) or project (JSON). |
+| Material travel on the sample factory | 14,155 → 6,453 load-metres per shift (**−54%**) |
+| AI model accuracy on test plans | **95%** (mAP@0.5) |
+| Scale measurement error | **0.7%** |
 
-Results are marked out of date whenever the layout or volumes change.
+All result numbers and charts are in the `outputs/` folder.
 
-## Reproduce the experiments
+---
+
+## Folder guide
+
+| Folder / file | What's inside |
+|---|---|
+| `app.py` | The web app |
+| `factory_ai/` | The core code (AI model, measuring, optimiser) |
+| `scripts/` | Scripts to rebuild the data, retrain the model and re-run experiments |
+| `tests/` | Automated tests |
+| `data/` | Sample floor plans and their labels |
+| `outputs/` | Trained model, result numbers and charts |
+
+---
+
+## Rebuild everything (optional)
+
+Only needed if you want to regenerate the data or retrain the model.
+
 ```bash
-python scripts/01_generate_data.py               # 800 synthetic plans + COCO labels (split by image)
-python scripts/02_train_detector.py --epochs 16  # CPU ~30 min; GPU/Colab: add --pretrained
-python scripts/03_evaluate_detector.py           # mAP / precision / recall, calibration error
-python scripts/04_optimizer_experiments.py       # optimiser tables + figures
-python scripts/05_end_to_end_eval.py 40          # image → layout → optimisation vs ground truth
-python -m pytest -q tests                        # optimiser smoke tests
+python scripts/01_generate_data.py               # create 800 sample floor plans
+python scripts/02_train_detector.py --epochs 16  # train the AI model (~30 min on a laptop)
+python scripts/03_evaluate_detector.py           # measure model accuracy
+python scripts/04_optimizer_experiments.py       # optimiser results and charts
+python scripts/05_end_to_end_eval.py 40          # test the full pipeline
+python -m pytest tests                           # run the tests
 ```
-- Scripts can be run from any directory; paths resolve from the project root.
-- Training writes to `outputs/detector.partial.pt` and only replaces `outputs/detector.pt` when it finishes,
-  so an interrupted run never breaks the app.
-- On 8 GB RAM machines use `--batch 4`, close other heavy apps, and make sure the drive has a few GB free.
-- Colab: upload the project zip and open `colab_run_all.ipynb`.
 
-## Project structure
-| Path | Contents |
-|---|---|
-| `app.py` | Streamlit application |
-| `factory_ai/` | Library: `config`, `synthetic_data`, `detector`, `calibration`, `process_flow`, `layout_optimizer`, `pipeline`, `visualization` |
-| `scripts/` | Numbered experiment scripts (01–05) |
-| `tests/` | Optimiser smoke tests |
-| `data/` | Generated plan images and COCO annotations (train / val / test / ood) |
-| `outputs/` | Model checkpoint, metrics (JSON/CSV) and figures |
-| `presentation/` | Final report, presentation slides (script in speaker notes), presenter guide with Q&A |
-| `assets/`, `.streamlit/` | App logo and theme |
+> On a computer with 8 GB of RAM, add `--batch 4` to the training command.
+> To train on a free GPU, open `colab_run_all.ipynb` in Google Colab.
+
+---
 
 ## Limitations
-- The detector is trained and tested on **synthetic** plans and does not generalise to visually different plans
-  (stress-test mAP@0.5 0.32); it has not been tested on real factory drawings.
-- One machine per type; flow volumes are an assumed scenario.
-- Clearance is a geometric gap, not a safety-code check (no fire exits, aisle widths or forklift turning radii).
-- Simulated annealing is a heuristic: good solutions, no proof of global optimality.
+
+- The AI model was trained on computer-generated floor plans. It has not been tested on real factory drawings yet.
+- Each plan can have only one machine of each type.
+- Production volumes are example numbers, not real factory data.
+- The 1 m clearance keeps aisles open but is not a full safety or fire-code check.
+
+---
+
+**Built with** Python · PyTorch · OpenCV · Streamlit
