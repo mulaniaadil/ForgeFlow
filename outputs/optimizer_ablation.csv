@@ -1,0 +1,6 @@
+Setting,best_manhattan,best_path,initial_feasible
+clearance 0.5 m,9847.2,6864.4,True
+clearance 1.0 m (default),9856.0,7353.2,True
+clearance 1.5 m,9864.8,7132.0,False
+no rotation,9856.0,7413.2,True
+no column obstacle,9856.0,6923.2,True

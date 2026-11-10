@@ -1,0 +1,11 @@
+From,To,Unit_loads_per_shift
+Receiving,Cutting,220.0
+Assembly,Inspection,220.0
+Inspection,Packaging,220.0
+Packaging,Storage,180.0
+Storage,Dispatch,180.0
+Cutting,Drilling,160.0
+Drilling,Assembly,160.0
+Cutting,Assembly,60.0
+Packaging,Dispatch,40.0
+Inspection,Assembly,17.6

@@ -1,0 +1,6 @@
+Layout,Manhattan_cost,ShortestPath_cost,Path_reduction_vs_initial_%
+Initial (Phase-1 layout),17042.8,14154.8,0.0
+Random feasible (mean of 200 / 100),26008.3,22331.4,-57.8
+"SA only, mean of 10 seeds",9856.9,7543.1,46.7
+"SA only, best seed (by path cost)",9856.0,7143.2,49.5
+SA + path refinement (final),10242.4,6453.2,54.4

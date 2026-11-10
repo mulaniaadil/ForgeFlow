@@ -1,0 +1,20 @@
+{
+ "ood": {
+  "n": 40,
+  "complete_detection": 0.0,
+  "centre_err_m": null,
+  "initial_cost_err_pct": null,
+  "reduction_true_layout_pct": null,
+  "reduction_from_detections_pct": null,
+  "feasible_on_true_frac": null
+ },
+ "test": {
+  "n": 40,
+  "complete_detection": 0.675,
+  "centre_err_m": 0.21665091616676954,
+  "initial_cost_err_pct": 4.272833182749313,
+  "reduction_true_layout_pct": 68.99717802374481,
+  "reduction_from_detections_pct": 65.92725008739527,
+  "feasible_on_true_frac": 0.8888888888888888
+ }
+}

@@ -1,0 +1,55 @@
+{
+ "seeds": 10,
+ "iters": 30000,
+ "refine_iters": 300,
+ "initial_manhattan": 17042.8,
+ "initial_path": 14154.8,
+ "final_manhattan": 10242.4,
+ "final_path": 6453.2,
+ "sa_manhattan_mean": 9856.880000000001,
+ "sa_manhattan_std": 2.6399999999997816,
+ "sa_path_mean": 7543.079999999999,
+ "sa_path_std": 308.906668105433,
+ "random_manhattan_mean": 26008.332000000002,
+ "random_manhattan_std": 4047.462741443829,
+ "random_path_mean": 22331.412000000008,
+ "final_feasible": true,
+ "final_layout": {
+  "Cutting": [
+   0.5,
+   13.0,
+   4.0,
+   3.0
+  ],
+  "Drilling": [
+   5.5,
+   11.0,
+   3.0,
+   3.0
+  ],
+  "Assembly": [
+   8.5,
+   5.0,
+   3.0,
+   5.0
+  ],
+  "Inspection": [
+   12.5,
+   4.5,
+   2.5,
+   3.0
+  ],
+  "Packaging": [
+   17.5,
+   2.5,
+   4.0,
+   3.0
+  ],
+  "Storage": [
+   23.5,
+   3.0,
+   4.0,
+   4.0
+  ]
+ }
+}

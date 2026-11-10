@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="260" height="48" viewBox="0 0 260 48">
+  <rect x="2" y="6" width="36" height="36" rx="8" fill="#1b4a78"/>
+  <path d="M10 34V20l6 4v-4l6 4v-4l6 4V14h4v20z" fill="#fff"/>
+  <text x="48" y="31" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#0f2540">Factory Layout Studio</text>
+</svg>
